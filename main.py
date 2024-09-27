@@ -7,7 +7,7 @@ def calculate_control_digit(pinfl):
     weights = [7, 3, 1]  # Весовые коэффициенты
     total_sum = 0
 
-    for i, digit in enumerate(pinfl[:17]):  # Первые 17 цифр ПИНФЛ
+    for i, digit in enumerate(pinfl):  # Обрабатываем все 13 цифр ПИНФЛ
         weight = weights[i % 3]  # Циклически повторяем веса 7, 3, 1
         total_sum += int(digit) * weight
 
@@ -50,16 +50,16 @@ def generate_pinfl():
     gender_century_index = determine_gender_century_index(year, gender)
 
     region_code = str(random.randint(1, 9))  # Генерация случайного кода региона (1-9)
-    serial_number = str(random.randint(0, 9999)).zfill(4)  # Порядковый номер (4 цифры)
+    serial_number = str(random.randint(0, 99999)).zfill(4)  # Порядковый номер (4 цифры)
 
-    # Формирование первых 17 цифр ПИНФЛ
-    pinfl = f"{gender_century_index}{birth_date}{region_code}{serial_number}"
+    # Формирование первых 13 цифр ПИНФЛ
+    pinfl_without_control_digit = f"{gender_century_index}{birth_date}{region_code}{serial_number}"
 
     # Вычисление контрольной цифры
-    control_digit = calculate_control_digit(pinfl)
+    control_digit = calculate_control_digit(pinfl_without_control_digit)
 
-    # Полный ПИНФЛ
-    pinfl += str(control_digit)
+    # Полный ПИНФЛ (14 цифр)
+    pinfl = pinfl_without_control_digit + str(control_digit)
 
     return pinfl, gender, birth_date, year
 
@@ -73,6 +73,9 @@ if year >= 2000:
 else:
     full_year = f"19{birth_date[4:]}"
 
-print(f"Сгенерированный ПИНФЛ: {pinfl}")
+print(f"Сгенерированный ПИНФЛ: {pinfl}")  # Проверка длины здесь
 print(f"Пол: {gender}")
 print(f"Дата рождения: {birth_date[:2]}.{birth_date[2:4]}.{full_year}")
+
+# Проверка длины сгенерированного ПИНФЛ
+print(f"Длина сгенерированного ПИНФЛ: {len(pinfl)}")  # Это должно вывести 14
